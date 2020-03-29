@@ -3,7 +3,6 @@ import './App.css';
 import {WeatherRow} from './components/weather-row/weather-row'
 import {WeatherDetailsCard} from './components/weather-details-card/weather-details-card'
 import {WeatherDataService} from './services/WeatherDataSerive'
-import { geolocated } from "react-geolocated";
 
 export default class App extends React.Component {
 
@@ -13,6 +12,8 @@ export default class App extends React.Component {
     super(props)
 
     this.state = {
+      // user location
+      coords: {},
       // week data
       isLoaded: false,
       weekForecast: {},
@@ -26,20 +27,18 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    this.weatherDataService.getFiveDaysForecast(
-      this.props.coords,
-      this.weatherDataFound,
-      this.weatherDataNotFound
-    )
 
-    navigator.geolocation.getCurrentPosition(position => {
-      console.log(position)
+    // TODO alternative call back by city ID
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.setState({
+        coords: position.coords
+      })
+      this.weatherDataService.getFiveDaysForecastByCoords(
+        position.coords,
+        this.weatherDataFound,
+        this.weatherDataNotFound
+      )
     })
-    console.log('coords data')
-    console.log(this.props.isGeolocationAvailable)
-    console.log(this.props.isGeolocationEnabled)
-    console.log(this.props.coords)
-    console.log(this.props.positionError)
   }
 
   weatherDataFound(data) {
@@ -89,6 +88,7 @@ export default class App extends React.Component {
           </div>
           <div className="row justify-content-center">
             <WeatherDetailsCard
+              coords={this.state.coords}
               isToday={this.state.isTodayDetails}
               forecastDetails={this.state.forecastDetails}
             />

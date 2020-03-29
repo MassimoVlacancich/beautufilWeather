@@ -6,16 +6,16 @@ export class WeatherDataService {
   appId = '137f8186025fe85b02a1a256bb1bca4b'; // TODO move to config
   herokuCors = 'https://cors-anywhere.herokuapp.com/'
 
+  // Default URLS to London
   fiveDaysForecastUrl = 
     `${this.herokuCors}http://api.openweathermap.org/data/2.5/forecast?id=${this.cityId}&appid=${this.appId}`;
 
   todayForecastUrl = 
     `${this.herokuCors}http://api.openweathermap.org/data/2.5/weather?id=${this.cityId}&appid=${this.appId}`;
 
-  fetchFiveDaysThreeHoursData(coords){
-    console.log('COORDS')
-    console.log(coords)
-    return fetch(this.fiveDaysForecastUrl, {
+
+  fetchFiveDaysThreeHoursData(apiUrl){
+    return fetch(apiUrl, {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json'
@@ -51,19 +51,8 @@ export class WeatherDataService {
       )
   }
 
-  getFiveDaysThreeHoursForecast(foundCallBack, notFoundCallBack) {
-    this.fetchFiveDaysThreeHoursData()
-      .then(res => {
-        if(res != null){
-          foundCallBack(res)
-        }else(
-          notFoundCallBack()
-        )
-      })
-  }
-
-  fetchFiveDaysForecast(coords) {
-    return this.fetchFiveDaysThreeHoursData(coords)
+  fetchFiveDaysForecast(apiUrl) {
+    return this.fetchFiveDaysThreeHoursData(apiUrl)
       .then(hourly => {
 
         // forecast by hour for each day
@@ -144,8 +133,8 @@ export class WeatherDataService {
       })
   }
 
-  getFiveDaysForecast(coords, foundCallBack, notFoundCallBack) {
-    this.fetchFiveDaysForecast(coords)
+  getFiveDaysForecast(apiUrl, foundCallBack, notFoundCallBack) {
+    this.fetchFiveDaysForecast(apiUrl)
       .then(res => {
         if(res != null){
           foundCallBack(res)
@@ -155,8 +144,25 @@ export class WeatherDataService {
       })
   }
 
-  fetchTodayForecast() {
-    return fetch(this.todayForecastUrl, {
+  getFiveDaysForecastByCityId(cityId, foundCallBack, notFoundCallBack) {
+    // change the url to api and call the function
+    this.fiveDaysForecastUrl = 
+    `${this.herokuCors}http://api.openweathermap.org/data/2.5/forecast?id=${cityId}&appid=${this.appId}`;
+
+    this.getFiveDaysForecast(this.fiveDaysForecastUrl, foundCallBack, notFoundCallBack)
+  }
+
+  getFiveDaysForecastByCoords(coords, foundCallBack, notFoundCallBack) {
+    // change the url to api and call the function
+    this.fiveDaysForecastUrl = 
+    `${this.herokuCors}http://api.openweathermap.org/data/2.5/forecast?lat=${coords.latitude}&lon=${coords.longitude}&appid=${this.appId}`;
+    this.getFiveDaysForecast(this.fiveDaysForecastUrl, foundCallBack, notFoundCallBack)
+  }
+
+  // TODAY FORECAST
+
+  fetchTodayForecast(apiUrl) {
+    return fetch(apiUrl, {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json'
@@ -176,15 +182,28 @@ export class WeatherDataService {
       )
   }
 
-  getTodayForecastDetaisl(foundCallBack, notFoundCallBack) {
-    this.fetchTodayForecast()
+  getTodayForecastDetails(apiUrl, foundCallBack, notFoundCallBack) {
+    this.fetchTodayForecast(apiUrl)
       .then(res => {
+        console.log(res)
         if(res != null){
           foundCallBack(res)
         }else(
           notFoundCallBack()
         )
       })
+  }
+
+  getTodayForecastDetailsByCityId(cityId, foundCallBack, notFoundCallBack){
+    this.todayForecastUrl = 
+    `${this.herokuCors}http://api.openweathermap.org/data/2.5/weather?id=${cityId}&appid=${this.appId}`;
+    this.getTodayForecastDetails(this.todayForecastUrl, foundCallBack, notFoundCallBack)
+  }
+
+  getTodayForecastDetailsByCoords(coords, foundCallBack, notFoundCallBack){
+    this.todayForecastUrl = 
+    `${this.herokuCors}http://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=${this.appId}`;
+    this.getTodayForecastDetails(this.todayForecastUrl, foundCallBack, notFoundCallBack)
   }
 
 

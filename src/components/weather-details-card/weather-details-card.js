@@ -20,6 +20,7 @@ export class WeatherDetailsCard extends React.Component {
 
     this.state = {
       isLoaded: false,
+      location: 'Unknown', // TODO change so that location is better known
       weather: {},
       mainInfo: {},
       wind: {}
@@ -31,7 +32,9 @@ export class WeatherDetailsCard extends React.Component {
 
   componentDidMount() {
     if(this.props.isToday){
-      this.weatherDataService.getTodayForecastDetaisl(
+      // TODO dynamically change cityID - Coords
+      this.weatherDataService.getTodayForecastDetailsByCoords(
+        this.props.coords,
         this.foundWeatherDetails,
         this.weatherDetailsNotFound
       )
@@ -60,13 +63,12 @@ export class WeatherDetailsCard extends React.Component {
   }
 
   foundWeatherDetails(data){
-    console.log('New data')
-    console.log(data)
     this.setState({
       isLoaded: true,
       weather: data.weather[0], // main, description, icon, id
       mainInfo: data.main,      // feels_like, humidity, pressure, temp, temp_max, temp_min
-      wind: data.wind
+      wind: data.wind,
+      location: data.name
     })
   }
 
@@ -77,6 +79,7 @@ export class WeatherDetailsCard extends React.Component {
   render(){
 
     const date = this.props.forecastDetails.date.toLocaleDateString("en-UK", this.dateOptions)
+    const location = this.state.location ? this.state.location : 'Unknown' // TODO improve as cannot be unknown
     const hourlyForecast = this.props.forecastDetails.hourly
     const onHourClick = () => console.log('Clicked hourly current day forecast')
     var weatherMain
@@ -113,6 +116,8 @@ export class WeatherDetailsCard extends React.Component {
               />
             </div>
           </Tab>
+
+          {/* TODO add clouds % and if available sunrise and sunset */}
           <Tab eventKey="details" title="Details" className="tab">
             <div className="row details">
 
@@ -177,6 +182,10 @@ export class WeatherDetailsCard extends React.Component {
             <div className="row">
               <div className="col-md-5">
                 <p>{date}</p>
+                <p>
+                  <span><img className="location-icon" alt="loc" src="icons/static/location-pin.png"/></span>
+                  {location}
+                </p>
                 <h1>{weatherMain}</h1>
                 <h3>{weatherDescription}</h3>
                 <i className="live">{updateTime}</i>
@@ -185,7 +194,7 @@ export class WeatherDetailsCard extends React.Component {
                 <table>
                   <tbody>
                     <tr>
-                      <td class="align-middle high-low">
+                      <td className="align-middle high-low">
                         <p className="medium-grey high-temp">
                           <span><img alt="h" src="icons/static/high.png"/></span>
                           {highTemp}°

@@ -25,6 +25,10 @@
   margin-bottom: -60px;
 }
 
+.details-card .location-icon{
+  width: 24px;
+}
+
 .details-card .live{
   font-size: 0.75em;
   color: #bababa !important;
