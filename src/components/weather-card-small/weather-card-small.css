@@ -1,0 +1,38 @@
+.weather-card{
+  width: 90px;
+  border-color: white ! important;
+  padding: 10px;
+  float: left;
+  margin-bottom: 20px;
+}
+
+.weather-card:hover{
+  border-color:rgba(0, 0, 0, 0.125) ! important;
+  background-color: rgba(0, 63, 55, 0.025)
+}
+
+.weather-card .weather-day{
+  color: #878787;
+}
+
+.weather-card .weather-time{
+  font-size: 0.775em;
+}
+
+.weather-card .weather-temps{
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.weather-card .temp-high{
+  display:inline-block;
+  padding-right:5px;
+}
+
+.weather-card .temp-low{
+  display:inline-block;
+}
+
+.weather-card .custom-icon{
+  margin: 16px;
+}
